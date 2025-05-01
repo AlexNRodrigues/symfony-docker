@@ -6,7 +6,9 @@ DC = docker-compose
 PHP = $(DC) exec php
 NGINX = $(DC) exec nginx
 DB = $(DC) exec db
+NODE = $(DC) exec node
 PHP_CONTAINER=symfony_php
+NODE_CONTAINER=symfony_node
 WORKDIR=/var/www/html
 
 # ----------------------
@@ -36,6 +38,29 @@ update:
 # Limpa o cache do Symfony
 cache-clear:
 	docker exec -it $(PHP_CONTAINER) php $(WORKDIR)/bin/console cache:clear
+
+# ----------------------
+# NPM e Webpack
+# ----------------------
+
+# Instala dependências do NPM
+npm-install:
+	docker exec -it $(NODE_CONTAINER) npm install
+
+# Executa Webpack Encore em modo watch
+npm-watch:
+	docker exec -it $(NODE_CONTAINER) npm run watch
+
+# Compila assets para produção
+npm-build:
+	docker exec -it $(NODE_CONTAINER) npm run build
+
+# Executa comando NPM arbitrário
+npm:
+	docker exec -it $(NODE_CONTAINER) npm $(cmd)
+
+npx:
+	docker exec -it $(NODE_CONTAINER) npx tailwindcss init -p
 
 # ----------------------
 # Banco de dados
